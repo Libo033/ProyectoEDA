@@ -6,7 +6,6 @@
 int ObtenerRandomNum(int a, int b);
 void imprimirVerde(char *a);
 void imprimirAmarillo(char *a);
-void lecturaArchivo();
 char *palabraElegida();
 
 int main(void)
@@ -16,9 +15,9 @@ int main(void)
   srand(time(NULL));
   system("color 0F");
 
+  
   char *result = palabraElegida();
   printf("%s\n", result);
-  printf("%lld\n", strlen(result));
   free(result);
   
   return 0;
@@ -50,53 +49,36 @@ void imprimirAmarillo(char *a) // https://elpuig.xeill.net/Members/vcarceler/art
   printf("%s%s%s", amarillo, a, normal);
 }
 
-void lecturaArchivo()
-{
-  FILE *archivo = NULL;
-  char caracter;
-
-  archivo = fopen("C:\\Users\\valen\\Desktop\\Code\\09-EDA\\Proyecto\\palabras.txt", "rt");
-
-  if (archivo == NULL)
-  {
-    printf("\nError: No se pudo leer el archivo");
-  }
-  
-  do
-  {
-    caracter = fgetc(archivo);
-    printf("%c", caracter);
-  } while (caracter != EOF);
-}
-
 char *palabraElegida()
 {
+  // Se crean el puntero result que es el que retorna el valor final.
+  // y el puntero FILE que abrira el archivo palabras.txt
   char *result = NULL;
   FILE *archivo = NULL;
   archivo = fopen("..\\palabras.txt", "rt");
 
-  if (archivo == NULL)
+  if (archivo == NULL)  // Controla el error
   {
     printf("\nError: No se pudo leer el archivo");
     return result;
   }
 
-  fseek(archivo, 0, SEEK_END);
-  rewind(archivo);
-
-  result = (char *)malloc(5);
-  if (result == NULL)
+  result = (char *)malloc(5);  //Se establece el tamaño del string que se devuelve
+  if (result == NULL)   // Controla el error
   {
     printf("\nError: No se puedo asignar memoria");
     return result;
   }
 
+  // Se recibe el num. random para encontrar la palabra random
   int posPalabra = ObtenerRandomNum(1,30);
 
+  // Se establece la posicion al inicio de la palabra con el num random
+  // y se lee 5 caracteres
   fseek(archivo, posPalabra*7-7,SEEK_SET);
   fread(result, 1, 5, archivo);
-  result[5] = '\0';
-  fclose(archivo);
+  result[5] = '\0';  // Final
+  fclose(archivo);  // Se cierra el archivo.
 
   return result;
 }
