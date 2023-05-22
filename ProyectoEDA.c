@@ -2,10 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 int ObtenerRandomNum(int a, int b);
-void imprimirVerde(char *a);
-void imprimirAmarillo(char *a);
+int seEncuentraEn(char letra, char *palabra);
+
+void imprimirVerde(char a);
+void imprimirAmarillo(char a);
+void toUpper(char *a);
+void wordle();
+void compararPalabras(char *random, char *usuario);
+
+char *ingresarPalabra();
 char *palabraElegida();
 
 int main(void)
@@ -13,13 +21,30 @@ int main(void)
   // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
   // Funcion srand: https://www.tutorialspoint.com/c_standard_library/c_function_srand.htm
   srand(time(NULL));
-  system("color 0F");
 
-  
-  char *result = palabraElegida();
-  printf("%s\n", result);
-  free(result);
-  
+  short menu = 1;
+
+  do
+  {
+    system("cls");
+    printf("Bienvenido\n0-Salir.\n1-Jugar al WORDLE.\nIngresar: ");
+    scanf("%hd", &menu);
+
+    switch (menu)
+    {
+    case 1:
+      system("cls");
+
+      wordle();
+
+      system("pause");
+      break;
+
+    default:
+      break;
+    }
+  } while (menu != 0);
+
   return 0;
 }
 
@@ -33,20 +58,20 @@ int ObtenerRandomNum(int a, int b)
   return rand() % (b - a + 1) + a;
 }
 
-void imprimirVerde(char *a) // https://elpuig.xeill.net/Members/vcarceler/articulos/escape-ansi
+void imprimirVerde(char a) // https://elpuig.xeill.net/Members/vcarceler/articulos/escape-ansi
 {
   char *verde = "\033[0;40;1;32m";
   char *normal = "\033[0m";
 
-  printf("%s%s%s", verde, a, normal);
+  printf("%s%c%s", verde, a, normal);
 }
 
-void imprimirAmarillo(char *a) // https://elpuig.xeill.net/Members/vcarceler/articulos/escape-ansi
+void imprimirAmarillo(char a) // https://elpuig.xeill.net/Members/vcarceler/articulos/escape-ansi
 {
   char *amarillo = "\033[0;40;1;33m";
   char *normal = "\033[0m";
 
-  printf("%s%s%s", amarillo, a, normal);
+  printf("%s%c%s", amarillo, a, normal);
 }
 
 char *palabraElegida()
@@ -57,28 +82,119 @@ char *palabraElegida()
   FILE *archivo = NULL;
   archivo = fopen("..\\palabras.txt", "rt");
 
-  if (archivo == NULL)  // Controla el error
+  if (archivo == NULL) // Controla el error
   {
     printf("\nError: No se pudo leer el archivo");
     return result;
   }
 
-  result = (char *)malloc(5);  //Se establece el tamaño del string que se devuelve
-  if (result == NULL)   // Controla el error
+  result = (char *)malloc(5); // Se establece el tamaño del string que se devuelve
+  if (result == NULL)         // Controla el error
   {
     printf("\nError: No se puedo asignar memoria");
     return result;
   }
 
   // Se recibe el num. random para encontrar la palabra random
-  int posPalabra = ObtenerRandomNum(1,30);
+  int posPalabra = ObtenerRandomNum(1, 30);
 
   // Se establece la posicion al inicio de la palabra con el num random
   // y se lee 5 caracteres
-  fseek(archivo, posPalabra*7-7,SEEK_SET);
+  fseek(archivo, posPalabra * 7 - 7, SEEK_SET);
   fread(result, 1, 5, archivo);
-  result[5] = '\0';  // Final
+  result[5] = '\0'; // Final
   fclose(archivo);  // Se cierra el archivo.
 
+  toUpper(result);
+
   return result;
+}
+
+char *ingresarPalabra()
+{
+  char *result = NULL;
+  result = (char *)malloc(5); // Se establece el tamaño del string que se devuelve
+
+  if (result == NULL)
+  {
+    printf("\nError: No se puedo asignar memoria");
+    return result;
+  }
+
+  scanf("%5s", result);
+
+  toUpper(result);
+
+  return result;
+}
+
+void toUpper(char *a)
+{
+  int len = strlen(a);
+
+  for (short i = 0; i < len; i++)
+  {
+    a[i] = toupper(a[i]);
+  }
+}
+
+void wordle()
+{
+  // short intentos = 0;
+  char *result = NULL, *palabraIngresada = NULL;
+  result = palabraElegida();
+  printf("%s\n", result);
+
+  printf("WORDLE\nTienes 5 intentos para descubrir la palabra de 5 letras.\nIngresar palabra\n");
+  palabraIngresada = ingresarPalabra();
+  compararPalabras(result, palabraIngresada);
+
+  free(result);
+}
+
+void compararPalabras(char *random, char *usuario)
+{
+  short i;
+
+  if (strcmp(random, usuario) == 0)
+  {
+    for (i = 0; i < (short)strlen(usuario); i++)
+    {
+      imprimirVerde(usuario[i]);
+    }
+    printf("\nCorrecto!\n");
+  }
+  else
+  {
+    for (i = 0; i < (short)strlen(usuario); i++)
+    {
+      if (usuario[i] == random[i])
+      {
+        imprimirVerde(usuario[i]);
+      }
+      else if (seEncuentraEn(usuario[i], random) == 0)
+      {
+        imprimirAmarillo(usuario[i]);
+      }
+      else
+      {
+        printf("%c", usuario[i]);
+      }
+    }
+  }
+
+  printf("\n");
+}
+
+int seEncuentraEn(char letra, char *palabra)
+{
+  for (short i = 0; i < (short)strlen(palabra); i++)
+  {
+    if (palabra[i] == letra)
+    {
+      return 0;
+    }
+  }
+
+  return 1;
 }
