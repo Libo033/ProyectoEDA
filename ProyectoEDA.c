@@ -59,7 +59,7 @@ int ObtenerRandomNum(int a, int b)
 }
 
 void imprimirVerde(char a) // https://elpuig.xeill.net/Members/vcarceler/articulos/escape-ansi
-{
+{ // Transformar en return para poder almacenar la palabra entera y que cada letra tenga sus respectivos colores.
   char *verde = "\033[0;40;1;32m";
   char *normal = "\033[0m";
 
@@ -67,7 +67,7 @@ void imprimirVerde(char a) // https://elpuig.xeill.net/Members/vcarceler/articul
 }
 
 void imprimirAmarillo(char a) // https://elpuig.xeill.net/Members/vcarceler/articulos/escape-ansi
-{
+{ // Transformar en return para poder almacenar la palabra entera y que cada letra tenga sus respectivos colores.
   char *amarillo = "\033[0;40;1;33m";
   char *normal = "\033[0m";
 
@@ -138,7 +138,7 @@ void toUpper(char *a)
   }
 }
 
-void wordle()
+void wordle() // Crear en el main
 {
   // short intentos = 0;
   char *result = NULL, *palabraIngresada = NULL;
@@ -152,7 +152,7 @@ void wordle()
   free(result);
 }
 
-void compararPalabras(char *random, char *usuario)
+void compararPalabras(char *random, char *usuario)  // Que devuelva la palabra con cada color.
 {
   short i;
 
