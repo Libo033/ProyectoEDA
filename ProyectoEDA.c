@@ -22,7 +22,7 @@ int main(void)
   srand(time(NULL));
 
   // Variables y punteros WORDLE
-  short menu = 1, intentos = 0, finalJuego = 0;
+  short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0;
   char *result = NULL, *palabraIngresada = NULL;
 
   do
@@ -34,34 +34,40 @@ int main(void)
     switch (menu)
     {
     case 1:
-      system("cls");
-
-      intentos = 0, finalJuego = 0;
-      result = palabraRandom();
-
-      printf("WORDLE\nTienes 5 intentos para descubrir la palabra de 5 letras.\nIngresar palabra\n");
-
-      while (intentos < 5 && finalJuego == 0)
+      while (seguirJugando == 0)
       {
-        palabraIngresada = ingresarPalabra();
-        printf("            ");
-        finalJuego = compararPalabras(result, palabraIngresada);
-        printf("\n");
+        system("cls");
 
-        intentos++;
-        free(palabraIngresada);
-      }
+        intentos = 0, finalJuego = 0, seguirJugando = 0;
+        result = palabraRandom();
 
-      if (finalJuego == 1)
-      {
-        printf("\nFelicidades Ganaste!!!\n");
-      }
-      else
-      {
-        printf("Perdiste :(\nLa palabra era %s", result);
-      }
+        printf("WORDLE\nTienes 5 intentos para descubrir la palabra de 5 letras.\nIngresar palabra\n");
+        printf("%s\n", result);
 
-      free(result);
+        while (intentos < 5 && finalJuego == 0)
+        {
+          palabraIngresada = ingresarPalabra();
+          printf("            ");
+          finalJuego = compararPalabras(result, palabraIngresada);
+          printf("\n");
+
+          intentos++;
+          free(palabraIngresada);
+        }
+
+        if (finalJuego == 1)
+        {
+          printf("\nFelicidades Ganaste!!!\nIngresa 0 si quieres seguir jugando o 1 para salir\n");
+          scanf("%hd", &seguirJugando);
+        }
+        else
+        {
+          printf("Perdiste :(\nLa palabra era %s", result);
+          seguirJugando = 1;
+        }
+
+        free(result);
+      }
 
       printf("\n");
       system("pause");
@@ -180,13 +186,13 @@ char *palabraRandom()
   }
 
   result = (char *)malloc(5 * sizeof(char)); // Se establece el tamaño del string que se devuelve
-  if (result == NULL)         // Controla el error
+  if (result == NULL)                        // Controla el error
   {
     printf("\nError: No se puedo asignar memoria");
     return result;
   }
 
-  int posPalabra = ObtenerRandomNum(1, 30);
+  int posPalabra = ObtenerRandomNum(1, 127);
 
   // Se establece la posicion al inicio de la palabra con el num random y se lee 5 caracteres
   fseek(archivo, posPalabra * 7 - 7, SEEK_SET);
