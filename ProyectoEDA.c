@@ -15,6 +15,17 @@ void toUpper(char *a);
 char *ingresarPalabra();
 char *palabraRandom();
 
+int contarGuiones(char *palPantalla);
+int DescubrirPalabra(char *result, char *palPantalla);
+
+void unir(char *palIncompleta, char *palPantalla);
+void mostrarHorca(int nro);
+void llenarConGuiones(char *palPantalla);
+
+char ingresarLetra();
+char *DescubrirLetras(char *palabra, char letra);
+
+/*--------------------------------------------------------------------------------------------------------*/
 int main(void)
 {
   // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
@@ -34,6 +45,7 @@ int main(void)
     switch (menu)
     {
     case 1:
+      seguirJugando = 0;
       while (seguirJugando == 0)
       {
         system("cls");
@@ -72,11 +84,68 @@ int main(void)
       printf("\n");
       system("pause");
       break;
+
     case 2:
       system("cls");
+      seguirJugando = 0;
+      while (seguirJugando == 0)
+      {
+        system("cls");
 
-      printf("AHORCADO\n");
+        intentos = 0, finalJuego = 0;
+        int contGuiones = 5;
+        char letraIngresada;
+        char *palPantalla = NULL, *palIncompleta = NULL; // puntero a char
+        palPantalla = (char *)malloc(5 * sizeof(char));
 
+        llenarConGuiones(palPantalla);
+        result = palabraRandom();
+
+        printf("AHORCADO\nTienes 6 intentos para descubrir la palabra de 5 letras\n");
+        printf("%s\n", result);
+        int nro = 0;
+
+        mostrarHorca(nro);
+        while (intentos < 6 && finalJuego == 0)
+        {
+          letraIngresada = ingresarLetra();
+          palIncompleta = DescubrirLetras(result, letraIngresada);
+          unir(palIncompleta, palPantalla);
+          int contGuionesAct = contarGuiones(palPantalla);
+
+          if (contGuionesAct < contGuiones)
+          {
+            // acerto una letra
+            contGuiones--;
+            mostrarHorca(nro);
+          }
+          else
+          {
+            // pierde una vida
+            nro++;
+            mostrarHorca(nro);
+            intentos++;
+          }
+
+          printf("%s\n", palPantalla);
+          finalJuego = DescubrirPalabra(result, palPantalla);
+          printf("\n");
+        }
+
+        if (finalJuego == 1)
+        {
+          printf("\nFelicidades Ganaste!!!\nIngresa 0 si quieres seguir jugando o 1 para salir\n");
+          scanf("%hd", &seguirJugando);
+        }
+        else
+        {
+          printf("Perdiste :(\nLa palabra era %s", result);
+          seguirJugando = 1;
+        }
+
+        free(result);
+      }
+      printf("\n");
       system("pause");
       break;
     case 3:
@@ -181,14 +250,14 @@ char *palabraRandom()
 
   if (archivo == NULL) // Controla el error
   {
-    printf("\nError: No se pudo leer el archivo");
+    printf("\nError: No se pudo leer el archivo\n");
     return result;
   }
 
-  result = (char *)malloc(5 * sizeof(char)); // Se establece el tamaño del string que se devuelve
+  result = (char *)malloc(5 * sizeof(char)); // Se establece el tama�o del string que se devuelve
   if (result == NULL)                        // Controla el error
   {
-    printf("\nError: No se puedo asignar memoria");
+    printf("\nError: No se puedo asignar memoria\n");
     return result;
   }
 
@@ -208,7 +277,7 @@ char *palabraRandom()
 char *ingresarPalabra()
 {
   char *result = NULL;
-  result = (char *)malloc(5 * sizeof(char)); // Se establece el tamaño del string que se devuelve
+  result = (char *)malloc(5 * sizeof(char)); // Se establece el tama�o del string que se devuelve
 
   if (result == NULL)
   {
@@ -221,4 +290,160 @@ char *ingresarPalabra()
   toUpper(result);
 
   return result;
+}
+
+/*----------------------------------------------------------------------------*/
+char ingresarLetra()
+{
+  char letra;
+  printf("Ingresar letra: ");
+  fflush(stdin);
+  scanf("%c", &letra);
+  letra = toupper(letra);
+
+  return letra;
+}
+
+/*----------------------------------------------------------------------------*/
+char *DescubrirLetras(char *palabra, char letra)
+{
+  char *palADescubrir = NULL;
+  palADescubrir = (char *)malloc(5 * sizeof(char));
+
+  for (short i = 0; i < 5; i++)
+  {
+    if (palabra[i] == letra)
+    {
+      palADescubrir[i] = letra;
+    }
+    else
+    {
+      palADescubrir[i] = '_';
+    }
+  }
+
+  palADescubrir[5] = '\0';
+  return palADescubrir;
+}
+
+/*----------------------------------------------------------------------------*/
+int DescubrirPalabra(char *result, char *palPantalla)
+{
+  if (strcmp(result, palPantalla) == 0)
+    return 1;
+  else
+    return 0;
+}
+
+/*----------------------------------------------------------------------------*/
+void unir(char *palIncompleta, char *palPantalla)
+{
+  for (short i = 0; i < 5; i++)
+  {
+    if (palIncompleta[i] != '_')
+    {
+      palPantalla[i] = palIncompleta[i];
+    }
+  }
+}
+
+void mostrarHorca(int nro)
+{
+  switch (nro)
+  {
+  case 0:
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("=======\n");
+    break;
+
+  case 1:
+
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("  O   |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("=======\n");
+
+    break;
+
+  case 2:
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("  O   |\n");
+    printf("  |   |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("=======\n");
+
+    break;
+  case 3:
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("  O   |\n");
+    printf(" /|   |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("=======\n");
+    break;
+
+  case 4:
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("  O   |\n");
+    printf(" /|\\  |\n");
+    printf("      |\n");
+    printf("      |\n");
+    printf("=======\n");
+    break;
+
+  case 5:
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("  O   |\n");
+    printf(" /|\\  |\n");
+    printf(" /    |\n");
+    printf("      |\n");
+    printf("=======\n");
+    break;
+
+  case 6:
+    printf("  +---+\n");
+    printf("  |   |\n");
+    printf("  O   |\n");
+    printf(" /|\\  |\n");
+    printf(" / \\  |\n");
+    printf("      |\n");
+    printf("=======\n");
+    break;
+  }
+}
+
+int contarGuiones(char *palPantalla)
+{
+  int cont = 0;
+
+  for (short i = 0; i < 5; i++)
+  {
+    if (palPantalla[i] == '_')
+    {
+      cont++;
+    }
+  }
+  return cont;
+}
+
+void llenarConGuiones(char *palPantalla)
+{
+  for (short i = 0; i < 5; i++)
+  {
+    palPantalla[i] = '_';
+  }
+  palPantalla[5] = '\0';
 }
