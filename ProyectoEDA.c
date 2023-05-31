@@ -4,33 +4,29 @@
 #include <time.h>
 #include <ctype.h>
 
-int ObtenerRandomNum(int a, int b);
-int seEncuentraEn(char letra, char *palabra);
-int compararPalabras(char *random, char *usuario);
+int ObtenerRandomNum(int a, int b);                    // WORDLE
+int seEncuentraEn(char letra, char *palabra);          // WORDLE
+int compararPalabras(char *random, char *usuario);     // WORDLE
+int contarGuiones(char *palPantalla);                  // AHORCADO
+int DescubrirPalabra(char *result, char *palPantalla); // AHORCADO
 
-void imprimirVerde(char a);
-void imprimirAmarillo(char a);
-void toUpper(char *a);
+void imprimirVerde(char a);                            // WORDLE
+void imprimirAmarillo(char a);                         // WORDLE
+void toUpper(char *a);                                 // WORDLE
+void unir(char *palIncompleta, char *palPantalla);     // AHORCADO
+void mostrarHorca(int nro);                            // AHORCADO
+void llenarConGuiones(char *palPantalla);              // AHORCADO
 
-char *ingresarPalabra();
-char *palabraRandom();
-
-int contarGuiones(char *palPantalla);
-int DescubrirPalabra(char *result, char *palPantalla);
-
-void unir(char *palIncompleta, char *palPantalla);
-void mostrarHorca(int nro);
-void llenarConGuiones(char *palPantalla);
-
-char ingresarLetra();
-char *DescubrirLetras(char *palabra, char letra);
+char *ingresarPalabra();                               // WORDLE
+char *palabraRandom();                                 // WORDLE
+char ingresarLetra();                                  // AHORCADO
+char *DescubrirLetras(char *palabra, char letra);      // AHORCADO
 
 /*--------------------------------------------------------------------------------------------------------*/
 int main(void)
 {
   // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
-  // Funcion srand: https://www.tutorialspoint.com/c_standard_library/c_function_srand.htm
-  srand(time(NULL));
+  srand(time(NULL)); // Funcion srand: https://www.tutorialspoint.com/c_standard_library/c_function_srand.htm
 
   // Variables y punteros WORDLE
   short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0;
@@ -84,7 +80,6 @@ int main(void)
       printf("\n");
       system("pause");
       break;
-
     case 2:
       system("cls");
       seguirJugando = 0;
@@ -114,14 +109,12 @@ int main(void)
           int contGuionesAct = contarGuiones(palPantalla);
 
           if (contGuionesAct < contGuiones)
-          {
-            // acerto una letra
+          { // acerto una letra
             contGuiones--;
             mostrarHorca(nro);
           }
           else
-          {
-            // pierde una vida
+          { // pierde una vida
             nro++;
             mostrarHorca(nro);
             intentos++;
@@ -165,9 +158,8 @@ int main(void)
 
 int ObtenerRandomNum(int a, int b)
 {
-  // Se obtiene el num random a partir de la funcion rand() y hace numero random
-  // se le aplica el modulo de (b - a + 1) + a. Que son los numeros max y min. Por ende el num
-  // siempre estara entra esos rangos.
+  // Se obtiene el num random a partir de la funcion rand() y a ese numero random se le aplica el modulo
+  // de (b - a + 1) + a. Que son los numeros max y min. Por ende el num siempre estara entra esos rangos.
   // Ver https://www.omnicalculator.com/math/modulo. Ingresar en el dividendo un num random y en el divisor
   // el num resultado de (b - a + 1) y ves como siempre se obtiene un num entre los valores indicados.
   return rand() % (b - a + 1) + a;
@@ -242,8 +234,7 @@ void toUpper(char *a)
 
 char *palabraRandom()
 {
-  // Se crean el puntero result que es el que retorna el valor final.
-  // y el puntero FILE que abrira el archivo palabras.txt
+  // Se crean el puntero result que es el que retorna el valor final. Y el puntero FILE que abrira el archivo palabras.txt
   char *result = NULL;
   FILE *archivo = NULL;
   archivo = fopen("..\\palabras.txt", "rt");
@@ -285,7 +276,25 @@ char *ingresarPalabra()
     return result;
   }
 
-  scanf("%5s", result);
+  scanf(" %[^\n]", result); // Soluciona que si ponen palabras con espacio no haga cualquier cosa.
+
+  if (strlen(result) > 5) // Si la palabra ingresada es mayor a 5
+  {
+    char *strRecortado = (char *)malloc(6 * sizeof(char));
+
+    if (strRecortado == NULL)
+    {
+      printf("\nError: No se puedo asignar memoria");
+      return strRecortado;
+    }
+
+    memset(strRecortado, '\0', 6 * sizeof(char)); // Se coloca \0 para que no hay caracteres basura
+    strncpy(strRecortado, result, 5);             // Se recorta
+    toUpper(strRecortado);
+    free(result);
+
+    return strRecortado; // Y se envia
+  }
 
   toUpper(result);
 
@@ -296,7 +305,7 @@ char *ingresarPalabra()
 char ingresarLetra()
 {
   char letra;
-  printf("Ingresar letra: ");
+  printf("Ingresar letra: "); // Va afuera de la funcion en lo posible
   fflush(stdin);
   scanf("%c", &letra);
   letra = toupper(letra);
@@ -309,6 +318,12 @@ char *DescubrirLetras(char *palabra, char letra)
 {
   char *palADescubrir = NULL;
   palADescubrir = (char *)malloc(5 * sizeof(char));
+
+  if (palADescubrir == NULL)
+  {
+    printf("\nError: No se puedo asignar memoria");
+    return palADescubrir;
+  }
 
   for (short i = 0; i < 5; i++)
   {
@@ -360,9 +375,7 @@ void mostrarHorca(int nro)
     printf("      |\n");
     printf("=======\n");
     break;
-
   case 1:
-
     printf("  +---+\n");
     printf("  |   |\n");
     printf("  O   |\n");
@@ -370,9 +383,7 @@ void mostrarHorca(int nro)
     printf("      |\n");
     printf("      |\n");
     printf("=======\n");
-
     break;
-
   case 2:
     printf("  +---+\n");
     printf("  |   |\n");
@@ -381,7 +392,6 @@ void mostrarHorca(int nro)
     printf("      |\n");
     printf("      |\n");
     printf("=======\n");
-
     break;
   case 3:
     printf("  +---+\n");
@@ -392,7 +402,6 @@ void mostrarHorca(int nro)
     printf("      |\n");
     printf("=======\n");
     break;
-
   case 4:
     printf("  +---+\n");
     printf("  |   |\n");
@@ -402,7 +411,6 @@ void mostrarHorca(int nro)
     printf("      |\n");
     printf("=======\n");
     break;
-
   case 5:
     printf("  +---+\n");
     printf("  |   |\n");
@@ -412,7 +420,6 @@ void mostrarHorca(int nro)
     printf("      |\n");
     printf("=======\n");
     break;
-
   case 6:
     printf("  +---+\n");
     printf("  |   |\n");
