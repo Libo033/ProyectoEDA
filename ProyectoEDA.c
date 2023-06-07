@@ -10,17 +10,17 @@ int compararPalabras(char *random, char *usuario);     // WORDLE
 int contarGuiones(char *palPantalla);                  // AHORCADO
 int DescubrirPalabra(char *result, char *palPantalla); // AHORCADO
 
-void imprimirVerde(char a);                            // WORDLE
-void imprimirAmarillo(char a);                         // WORDLE
-void toUpper(char *a);                                 // WORDLE
-void unir(char *palIncompleta, char *palPantalla);     // AHORCADO
-void mostrarHorca(int nro);                            // AHORCADO
-void llenarConGuiones(char *palPantalla);              // AHORCADO
+void imprimirVerde(char a);                        // WORDLE
+void imprimirAmarillo(char a);                     // WORDLE
+void toUpper(char *a);                             // WORDLE
+void unir(char *palIncompleta, char *palPantalla); // AHORCADO
+void mostrarHorca(int nro);                        // AHORCADO
+void llenarConGuiones(char *palPantalla);          // AHORCADO
 
-char *ingresarPalabra();                               // WORDLE
-char *palabraRandom();                                 // WORDLE
-char ingresarLetra();                                  // AHORCADO
-char *DescubrirLetras(char *palabra, char letra);      // AHORCADO
+char *ingresarPalabra();                          // WORDLE
+char *palabraRandom();                            // WORDLE
+char ingresarLetra();                             // AHORCADO
+char *DescubrirLetras(char *palabra, char letra); // AHORCADO
 
 /*--------------------------------------------------------------------------------------------------------*/
 int main(void)
@@ -28,9 +28,21 @@ int main(void)
   // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
   srand(time(NULL)); // Funcion srand: https://www.tutorialspoint.com/c_standard_library/c_function_srand.htm
 
-  // Variables y punteros WORDLE
-  short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0;
+  short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0, puntajePartida = 0, puntajeTotal = 0;
   char *result = NULL, *palabraIngresada = NULL;
+
+  if (result != NULL || palabraIngresada != NULL)
+  {
+    printf("Error en el puntero");
+  }
+  
+  char *palPantalla = NULL, *palIncompleta = NULL;
+  char letraIngresada;
+
+  if (palPantalla != NULL || palIncompleta != NULL)
+  {
+    printf("Error en el puntero");
+  }
 
   do
   {
@@ -41,12 +53,13 @@ int main(void)
     switch (menu)
     {
     case 1:
-      seguirJugando = 0;
+      seguirJugando = 0, puntajeTotal = 0;
+
       while (seguirJugando == 0)
       {
         system("cls");
 
-        intentos = 0, finalJuego = 0, seguirJugando = 0;
+        intentos = 0, finalJuego = 0, seguirJugando = 0, puntajePartida = 6;
         result = palabraRandom();
 
         printf("WORDLE\nTienes 5 intentos para descubrir la palabra de 5 letras.\nIngresar palabra\n");
@@ -61,15 +74,20 @@ int main(void)
 
           intentos++;
           free(palabraIngresada);
+          puntajePartida--;
         }
+
+        puntajeTotal = puntajeTotal + puntajePartida;
 
         if (finalJuego == 1)
         {
+          printf("Puntaje: %d\n", puntajeTotal);
           printf("\nFelicidades Ganaste!!!\nIngresa 0 si quieres seguir jugando o 1 para salir\n");
           scanf("%hd", &seguirJugando);
         }
         else
         {
+          printf("Puntaje: %d\n", puntajeTotal);
           printf("Perdiste :(\nLa palabra era %s", result);
           seguirJugando = 1;
         }
@@ -81,16 +99,15 @@ int main(void)
       system("pause");
       break;
     case 2:
-      system("cls");
-      seguirJugando = 0;
+      seguirJugando = 0, puntajeTotal = 0;
+
       while (seguirJugando == 0)
       {
         system("cls");
 
-        intentos = 0, finalJuego = 0;
-        int contGuiones = 5;
-        char letraIngresada;
-        char *palPantalla = NULL, *palIncompleta = NULL; // puntero a char
+        intentos = 0, finalJuego = 0, puntajePartida = 6;
+        int contGuiones = 5, nro = 0, contGuionesAct = 0;
+
         palPantalla = (char *)malloc(5 * sizeof(char));
 
         llenarConGuiones(palPantalla);
@@ -98,47 +115,54 @@ int main(void)
 
         printf("AHORCADO\nTienes 6 intentos para descubrir la palabra de 5 letras\n");
         printf("%s\n", result);
-        int nro = 0;
 
-        mostrarHorca(nro);
         while (intentos < 6 && finalJuego == 0)
         {
+          printf("Ingresar letra: ");
           letraIngresada = ingresarLetra();
           palIncompleta = DescubrirLetras(result, letraIngresada);
           unir(palIncompleta, palPantalla);
-          int contGuionesAct = contarGuiones(palPantalla);
+          contGuionesAct = contarGuiones(palPantalla);
 
           if (contGuionesAct < contGuiones)
           { // acerto una letra
             contGuiones--;
-            mostrarHorca(nro);
           }
           else
           { // pierde una vida
             nro++;
-            mostrarHorca(nro);
             intentos++;
+            puntajePartida--;
           }
 
+          mostrarHorca(nro);
           printf("%s\n", palPantalla);
           finalJuego = DescubrirPalabra(result, palPantalla);
           printf("\n");
         }
 
+        puntajeTotal = puntajeTotal + puntajePartida;
+
         if (finalJuego == 1)
         {
+          printf("Puntaje: %d\n", puntajeTotal);
           printf("\nFelicidades Ganaste!!!\nIngresa 0 si quieres seguir jugando o 1 para salir\n");
           scanf("%hd", &seguirJugando);
         }
         else
         {
+          printf("Puntaje: %d\n", puntajeTotal);
           printf("Perdiste :(\nLa palabra era %s", result);
           seguirJugando = 1;
         }
 
         free(result);
+        free(palPantalla);
+        free(palIncompleta);
       }
+
       printf("\n");
+
       system("pause");
       break;
     case 3:
@@ -305,9 +329,7 @@ char *ingresarPalabra()
 char ingresarLetra()
 {
   char letra;
-  printf("Ingresar letra: "); // Va afuera de la funcion en lo posible
-  fflush(stdin);
-  scanf("%c", &letra);
+  scanf(" %c", &letra);
   letra = toupper(letra);
 
   return letra;
