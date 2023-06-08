@@ -38,7 +38,7 @@ int main(void)
   // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
   srand(time(NULL)); // Funcion srand: https://www.tutorialspoint.com/c_standard_library/c_function_srand.htm
 
-  short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0, puntajePartida = 0, puntajeTotal = 0, cargarPuntaje = 0;
+  short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0, puntajePartida = 0, puntajeTotal = 0, cargarPuntaje = 1;
   char *result = NULL, *palabraIngresada = NULL, *jugador = NULL, *palPantalla = NULL, *palIncompleta = NULL;
   char letraIngresada;
 
@@ -56,7 +56,7 @@ int main(void)
     switch (menu)
     {
     case 1:
-      seguirJugando = 0, puntajeTotal = 0;
+      seguirJugando = 0, puntajeTotal = 0, cargarPuntaje = 1;
 
       while (seguirJugando == 0)
       {
@@ -120,7 +120,7 @@ int main(void)
       system("pause");
       break;
     case 2:
-      seguirJugando = 0, puntajeTotal = 0;
+      seguirJugando = 0, puntajeTotal = 0, cargarPuntaje = 1;
 
       while (seguirJugando == 0)
       {
