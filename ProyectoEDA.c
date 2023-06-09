@@ -136,7 +136,8 @@ int main(void)
         result = palabraRandom(); // Obtiene palabra a descubrir
 
         printf("AHORCADO\nTienes 6 intentos para descubrir la palabra de 5 letras\n");
-
+        mostrarHorca(0);
+        
         while (intentos < 6 && finalJuego == 0)
         {
           printf("Ingresar letra: ");
