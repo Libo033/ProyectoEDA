@@ -38,6 +38,7 @@
   "C_Cpp.errorSquiggles": "disabled",
   "files.associations": {
     "*.ejs": "html",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "windows.h": "c"
   }
 }

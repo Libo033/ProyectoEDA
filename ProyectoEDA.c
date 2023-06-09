@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
+#include <Windows.h>
 
 int ObtenerRandomNum(int a, int b);                    // WORDLE
 int seEncuentraEn(char letra, char *palabra);          // WORDLE
@@ -35,8 +36,8 @@ struct puntajeJugador
 
 int main(void)
 {
-  // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
-  srand(time(NULL)); // Funcion srand: https://www.tutorialspoint.com/c_standard_library/c_function_srand.htm
+  srand(time(NULL)); // La funcion time(NULL) devuelve la cant. de segundos que pasaron desde 01/01/1970 (%lld)
+  SetConsoleTitle("Wordle & Ahorcado");
 
   short menu = 1, intentos = 0, finalJuego = 0, seguirJugando = 0, puntajePartida = 0, puntajeTotal = 0, cargarPuntaje = 1;
   char *result = NULL, *palabraIngresada = NULL, *jugador = NULL, *palPantalla = NULL, *palIncompleta = NULL;
