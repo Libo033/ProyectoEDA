@@ -210,7 +210,13 @@ int main(void)
       if (pGuardados == -1)
         return 1;
 
-      struct puntajeJugador *todos = obtenerPuntajes(pGuardados);
+      struct puntajeJugador *todos = NULL; //error
+      todos = obtenerPuntajes(pGuardados);
+
+      if(todos == NULL)
+      {
+          printf("Error en el puntaje");
+      }
 
       printf("Puntajes\n----------\n");
 
@@ -310,7 +316,7 @@ char *palabraRandom()
 {
   char *result = NULL; // Se crean el puntero result que es el que retorna el valor final.
   FILE *archivo = NULL; // Y el puntero FILE que abrira el archivo palabras.txt
-  archivo = fopen("..\\palabras.txt", "rt");
+  archivo = fopen("palabras.txt", "rt");
 
   if (archivo == NULL) // Controla el error
   {
@@ -339,7 +345,7 @@ char *palabraRandom()
 char *ingresarPalabra()
 {
   char *result = NULL;
-  result = (char *)malloc(5 * sizeof(char)); // Se establece el tama�o del string que se devuelve
+  result = (char *)malloc(21 * sizeof(char)); // Se establece el tama�o del string que se devuelve
 
   if (result == NULL)
   {
@@ -532,7 +538,7 @@ char *IngresarNombre()
 void guardarPuntaje(char *nombre, int puntaje)
 {
   FILE *archivo = NULL;
-  archivo = fopen("..\\puntaje.txt", "at"); // El modo de accesto 'at' abre el archivo para añadir datos al final
+  archivo = fopen("puntaje.txt", "at"); // El modo de accesto 'at' abre el archivo para añadir datos al final
   char carga[30];
   short i = 0;
 
@@ -540,7 +546,7 @@ void guardarPuntaje(char *nombre, int puntaje)
 
   if (archivo == NULL) // Controla el error
   {
-    printf("\nError: No se pudo leer el archivo\n");
+    printf("\nError: No se pudo leer el archivo 'guardarPuntaje'\n");
     return;
   }
 
@@ -557,12 +563,12 @@ int cantidadDePuntajes()
 {
   int cantidad = 0;
   FILE *archivo = NULL;
-  archivo = fopen("..\\puntaje.txt", "rt");
+  archivo = fopen("puntaje.txt", "rt");
   char caracter;
 
   if (archivo == NULL) // Controla el error
   {
-    printf("\nError: No se pudo leer el archivo\n");
+    printf("\nError: No se pudo leer el archivo'cantidadDePuntajes'\n");
     return -1;
   }
 
@@ -575,18 +581,20 @@ int cantidadDePuntajes()
     }
   } while (caracter != EOF);
 
+  fclose(archivo);
+
   return cantidad;
 }
 
 struct puntajeJugador *obtenerPuntajes(int jugadores)
 {
-  FILE *archivo = fopen("puntaje.txt", "rt");
+  FILE *archivo = fopen("puntaje.txt", "r");
   struct puntajeJugador *puntajes = malloc(jugadores * sizeof(struct puntajeJugador));
   struct puntajeJugador aux;
 
   if (archivo == NULL)
   {
-    printf("No se pudo abrir el archivo.\n");
+    printf("No se pudo abrir el archivo puntaje 'puntajeJugador'\n");
     return NULL;
   }
 
@@ -608,12 +616,11 @@ struct puntajeJugador *obtenerPuntajes(int jugadores)
     if (nombre != NULL && puntajeStr != NULL)
     {
       int tam = strlen(nombre);
-      puntajes[i].nombre = (char *)malloc(tam * sizeof(char));
+      puntajes[i].nombre = (char *)malloc(tam * sizeof(char) + 1);
       strcpy(puntajes[i].nombre, nombre);
       sscanf(puntajeStr, "%d", &puntajes[i].puntaje);
     }
   }
-  fclose(archivo);
 
   for (int i = 0; i < jugadores-1; i++)  // Ordenamiento. Para devolver funcion ya ordenada.
   {
@@ -627,6 +634,8 @@ struct puntajeJugador *obtenerPuntajes(int jugadores)
       }
     }
   }
+
+  fclose(archivo);
 
   return puntajes;
 }
