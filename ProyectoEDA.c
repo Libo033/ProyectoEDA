@@ -137,7 +137,7 @@ int main(void)
 
         printf("AHORCADO\nTienes 6 intentos para descubrir la palabra de 5 letras\n");
         mostrarHorca(0);
-        
+
         while (intentos < 6 && finalJuego == 0)
         {
           printf("Ingresar letra: ");
@@ -327,7 +327,7 @@ char *palabraRandom()
 
   int posPalabra = ObtenerRandomNum(1, 126);
 
-  fseek(archivo, posPalabra * 7 - 7, SEEK_SET);  // Se establece la posicion al inicio de la palabra con el num random 
+  fseek(archivo, posPalabra * 7 - 7, SEEK_SET);  // Se establece la posicion al inicio de la palabra con el num random
   fread(result, 1, 5, archivo);  // y se lee 5 caracteres
   result[5] = '\0'; // Final
   fclose(archivo);  // Se cierra el archivo.
@@ -580,7 +580,7 @@ int cantidadDePuntajes()
 
 struct puntajeJugador *obtenerPuntajes(int jugadores)
 {
-  FILE *archivo = fopen("..\\puntaje.txt", "r");
+  FILE *archivo = fopen("puntaje.txt", "rt");
   struct puntajeJugador *puntajes = malloc(jugadores * sizeof(struct puntajeJugador));
   struct puntajeJugador aux;
 
