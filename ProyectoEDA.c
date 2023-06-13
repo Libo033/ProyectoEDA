@@ -607,7 +607,8 @@ struct puntajeJugador *obtenerPuntajes(int jugadores)
 
     if (nombre != NULL && puntajeStr != NULL)
     {
-      puntajes[i].nombre = malloc(strlen(nombre) + 1);
+      int tam = strlen(nombre);
+      puntajes[i].nombre = (char *)malloc(tam * sizeof(char));
       strcpy(puntajes[i].nombre, nombre);
       sscanf(puntajeStr, "%d", &puntajes[i].puntaje);
     }

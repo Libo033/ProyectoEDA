@@ -3,3 +3,6 @@ Valentin=14
 la=5
 Libo=6
 Val123=6
+Libo321=2
+valentin1=3
+Libo33=5
